@@ -1,0 +1,42 @@
+#Código para prueba de concepto
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import List
+from transformers import pipeline
+
+app = FastAPI()
+
+# Cargar modelo de NLP para generación de amenazas
+threat_generator = pipeline("text-generation", model="EleutherAI/gpt-neo-1.3B")
+
+class UseCaseInput(BaseModel):
+    use_case_description: str
+
+class Threat(BaseModel):
+    description: str
+    mitigation: str
+
+class ThreatResponse(BaseModel):
+    threats: List[Threat]
+
+@app.post("/api/threats", response_model=ThreatResponse)
+def identify_threats(input_data: UseCaseInput):
+    # Generación de amenazas basada en IA
+    generated_texts = threat_generator(f"Detect threats: {input_data.use_case_description}", max_length=100, num_return_sequences=2)
+    
+    threats = []
+    for text in generated_texts:
+        threats.append(Threat(
+            description=text['generated_text'],
+            mitigation="Mitigación sugerida basada en la amenaza identificada."
+        ))
+    
+    return ThreatResponse(threats=threats)
+
+@app.get("/")
+def read_root():
+    return {"message": "Threat Model API - Proporciona una descripción del caso de uso para identificar amenazas potenciales."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
