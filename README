@@ -1,0 +1,57 @@
+
+Instalación y Configuración
+
+1. Clonar el repositorio
+
+ git clone <URL_DEL_REPOSITORIO>
+ cd <NOMBRE_DEL_REPOSITORIO>
+
+2. Crear un entorno virtual (Para Mac Linux o Windows)
+
+python -m venv venv
+source venv/bin/activate  # En macOS/Linux
+venv\Scripts\activate    # En Windows
+
+3. Instalar dependencias
+
+pip install -r requirements.txt
+
+Ejecución de la API
+
+uvicorn main:app --reload
+
+La API estará disponible en http://127.0.0.1:8000/
+
+Prueba de la API
+
+1. Endpoint de bienvenida
+
+Realizar una petición GET:
+
+curl -X 'GET' 'http://127.0.0.1:8000/' -H 'accept: application/json'
+
+Respuesta esperada:
+
+{"message": "Threat Model API - Proporciona una descripción del caso de uso para identificar amenazas potenciales."}
+
+2. Endpoint para detectar amenazas
+
+Realizar una petición POST con un caso de uso:
+
+curl -X 'POST' 'http://127.0.0.1:8000/api/threats' \
+     -H 'Content-Type: application/json' \
+     -d '{"use_case_description": "Autenticación de usuario en una aplicación web"}'
+
+Respuesta esperada:
+
+{
+  "threats": [
+    {"description": "Texto generado por IA sobre amenaza", "mitigation": "Mitigación sugerida."}
+  ]
+}
+
+Documentación automática
+
+Swagger UI: http://127.0.0.1:8000/docs
+
+ReDoc: http://127.0.0.1:8000/redoc
