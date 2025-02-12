@@ -1,4 +1,4 @@
-#Código para prueba de concepto
+#Código
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
